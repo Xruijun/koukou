@@ -1,0 +1,166 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>个人空间</title>
+    <script type="text/javascript">
+        function f1() {
+            var css = document.createElement('link');
+            css.href = 'https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css';
+            css.rel = 'stylesheet';
+            css.type = 'text/css';
+            document.getElementsByTagName('head')[0].appendChild(css);
+        }
+    </script>
+    <link rel="stylesheet" href={% static 'css/app.css' %}>
+    <link rel="stylesheet" href={% static 'css/theme.css' %}>
+
+</head>
+
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
+    <a class="navbar-brand font-weight-bolder mr-3" href="workshop.html"><img src={% static 'img/logo.png' %}></a>
+    <button class="navbar-light navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsDefault"
+            aria-controls="navbarsDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarsDefault">
+        <ul class="navbar-nav mr-auto align-items-center">
+            <form class="bd-search hidden-sm-down">
+                <input type="text" class="form-control bg-graylight border-0 font-weight-bold" id="search-input"
+                       placeholder="Search..." autocomplete="off">
+                <div class="dropdown-menu bd-search-results" id="search-results">
+                </div>
+            </form>
+        </ul>
+        <ul class="navbar-nav ml-auto align-items-center">
+            <li class="nav-item">
+                <a class="nav-link" href="/workshop">创意工坊</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="/upload">上传我的</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/author">
+                    <img class="rounded-circle mr-2" src={% static "img/av.png" %} width="30">
+                    <span class="align-middle">个人空间</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<main role="main">
+    <div style="width:100px; height:100px">
+        <div class="container-fluid mb-5">
+            <div class="row">
+                <div class="card-columns">
+                    <input type="file" name="file" id="uploadImage" onchange="showimg()">
+                    <div id="show_picture" onclick="rectClick(event)">
+                        <img src="" alt="" id="img"/>
+                    </div>
+                    <div>坐标位置：
+                        <span id="X_location"></span>
+                        <span id="Y_location"></span>
+                    </div>
+                    <inpiut type="radio" name = "back"> 后景
+                    <inpiut type="radio" name = "back"> 前景
+                    <input type="submit" value="提交" onclick="upload_location(this)">
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src={% static "js/app.js" %}></script>
+<script src={% static "js/theme.js" %}></script>
+<script src={% static "js/upload.js" %}></script>
+<script type="text/javascript" src="{% static "js/sign_js/jquery.min.js" %}"></script>
+<script>
+    function showimg() {
+        var file =$("#uploadImage")[0].files[0];
+        var formData = new FormData();
+        formData.append("file", file);
+        console.log(file);
+        $.ajax({
+            url: "/upload/",
+            type: "post",
+            data: formData,
+            cache: false,
+            processData: false,
+            contentType: false,
+            dataType: 'text',
+            success: function () {
+                var imgURL = URL.createObjectURL($("#uploadImage")[0].files[0]);
+                //用attr将img的src属性改成获得的url
+                $("#img").attr("src", imgURL);
+                $("#show_picture").show();
+            },
+        });
+    }
+
+    //获取相对于当前所指向对象的位置坐标
+    function rectClick(event) {
+        $("#X_location").text("X:" + event.offsetX);
+        $("#Y_location").text("Y:" + event.offsetY);
+    }
+
+    //提交坐标
+    function upload_location(self) {
+        var x = $("#X_location").text();
+        var y = $("#Y_location").text();
+        console.log(x, y);
+        $.ajax({
+            type: "post",
+            url: "/upload/",
+            data: {
+                X: x,
+                Y: y,
+            },
+            success: function () {
+                alert("提交成功")
+            },
+        });
+    }
+
+</script>
+<!-- 版权要求，保存作者网站 -->
+{% comment %}<footer class="footer pt-5 pb-5 text-center">
+
+    <div class="container">
+
+          <div class="socials-media">
+
+            <ul class="list-unstyled">
+              <li class="d-inline-block ml-1 mr-1"><a href="#" class="text-dark"><i class="fa fa-facebook"></i></a></li>
+              <li class="d-inline-block ml-1 mr-1"><a href="#" class="text-dark"><i class="fa fa-twitter"></i></a></li>
+              <li class="d-inline-block ml-1 mr-1"><a href="#" class="text-dark"><i class="fa fa-instagram"></i></a></li>
+              <li class="d-inline-block ml-1 mr-1"><a href="#" class="text-dark"><i class="fa fa-google-plus"></i></a></li>
+              <li class="d-inline-block ml-1 mr-1"><a href="#" class="text-dark"><i class="fa fa-behance"></i></a></li>
+              <li class="d-inline-block ml-1 mr-1"><a href="#" class="text-dark"><i class="fa fa-dribbble"></i></a></li>
+            </ul>
+
+          </div>
+
+            <!--
+              All the links in the footer should remain intact.
+              You may remove the links only if you donate:
+              https://www.wowthemes.net/freebies-license/
+            -->
+          <p>©  <span class="credits font-weight-bold">
+            <a target="_blank" class="text-dark" href="https://www.wowthemes.net/pintereso-free-html-bootstrap-template/"><u>Pintereso Bootstrap HTML Template</u> by WowThemes.net.</a>
+          </span>
+          </p>
+
+
+        </div>
+
+    </footer>  {% endcomment %}
+</body>
+
+</html>
