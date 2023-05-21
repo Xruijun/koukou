@@ -56,22 +56,62 @@
 </nav>
 
 <main role="main">
-    <div style="width:100px; height:100px">
-        <div class="container-fluid mb-5">
-            <div class="row">
-                <div class="card-columns">
-                    <input type="file" name="file" id="uploadImage" onchange="showimg()">
-                    <div id="show_picture" onclick="rectClick(event)">
-                        <img src="" alt="" id="img"/>
-                    </div>
-                    <div>坐标位置：
-                        <span id="X_location"></span>
-                        <span id="Y_location"></span>
-                    </div>
-                    <inpiut type="radio" name = "back"> 后景
-                    <inpiut type="radio" name = "back"> 前景
-                    <input type="submit" value="提交" onclick="upload_location(this)">
+    <div class="container-fluid">
+        <div style="width: 100%;overflow: hidden;">
+            <div style="float:left;width: 50%;float: left;">
+                <input class="form-control-file" type="file" name="file" id="uploadImage" onchange="showimg()">
+                <div id="show_picture" onclick="getpoint(event)">
+                    <img class="img-fluid" src="" alt="" id="img"/>
                 </div>
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">选取的点</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">*最多只能选取5个点</h6>
+                        <p class="card-text">
+                        <form>
+                            <div id="point1" style="display:none">
+                                (<span id="X1_location"></span>,<span id="Y1_location"></span>)
+                                <input type="radio" id="back1" name="front_back1" value="0"/>
+                                <label for="back1">后景</label>
+                                <input type="radio" id="front1" name="front_back1" value="1">
+                                <label for="front1">前景</label>
+                            </div>
+                            <div id="point2" style="display:none">
+                                (<span id="X2_location"></span>,<span id="Y2_location"></span>)
+                                <input type="radio" id="back2" name="front_back2" value="0"/>
+                                <label for="back2">后景</label>
+                                <input type="radio" id="front2" name="front_back2" value="1">
+                                <label for="front2">前景</label>
+                            </div>
+                            <div id="point3" style="display:none">
+                                (<span id="X3_location"></span>,<span id="Y3_location"></span>)
+                                <input type="radio" id="back3" name="front_back3" value="0"/>
+                                <label for="back3">后景</label>
+                                <input type="radio" id="front3" name="front_back3" value="1">
+                                <label for="front3">前景</label>
+                            </div>
+                            <div id="point4" style="display:none">
+                                (<span id="X4_location"></span>,<span id="Y4_location"></span>)
+                                <input type="radio" id="back4" name="front_back4" value="0"/>
+                                <label for="back4">后景</label>
+                                <input type="radio" id="front4" name="front_back4" value="1">
+                                <label for="front4">前景</label>
+                            </div>
+                            <div id="point5" style="display:none">
+                                (<span id="X5_location"></span>,<span id="Y5_location"></span>)
+                                <input type="radio" id="back5" name="front_back5" value="0"/>
+                                <label for="back5">后景</label>
+                                <input type="radio" id="front5" name="front_back5" value="1">
+                                <label for="front5">前景</label>
+                            </div>
+                            <input type="button" value="提交" class="btn btn-success" onclick="upload_location(this)"/>
+                        </form>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div style="float:right;width: 50%;float: right;">
+                <span>图片</span>
             </div>
         </div>
     </div>
@@ -83,7 +123,7 @@
 <script type="text/javascript" src="{% static "js/sign_js/jquery.min.js" %}"></script>
 <script>
     function showimg() {
-        var file =$("#uploadImage")[0].files[0];
+        var file = $("#uploadImage")[0].files[0];
         var formData = new FormData();
         formData.append("file", file);
         console.log(file);
@@ -106,21 +146,55 @@
 
     //获取相对于当前所指向对象的位置坐标
     function rectClick(event) {
-        $("#X_location").text("X:" + event.offsetX);
-        $("#Y_location").text("Y:" + event.offsetY);
+        return {x: event.offsetX, y: event.offsetY}
+    }
+
+    function getpoint(event) {
+        var point = rectClick(event);
+        if (!$("#X1_location").text()) {
+            $("#X1_location").text(point.x);
+            $("#Y1_location").text(point.y);
+            $("#point1").css("display","block");
+        } else if (!$("#X2_location").text()) {
+            $("#X2_location").text(point.x);
+            $("#Y2_location").text(point.y);
+            $("#point2").css("display","block");
+        } else if (!$("#X3_location").text()) {
+            $("#X3_location").text(point.x);
+            $("#Y3_location").text(point.y);
+            $("#point3").css("display","block");
+        } else if (!$("#X4_location").text()) {
+            $("#X4_location").text(point.x);
+            $("#Y4_location").text(point.y);
+            $("#point4").css("display","block");
+        } else if (!$("#X5_location").text()) {
+            $("#X5_location").text(point.x);
+            $("#Y5_location").text(point.y);
+            $("#point5").css("display","block");
+        }
     }
 
     //提交坐标
     function upload_location(self) {
-        var x = $("#X_location").text();
-        var y = $("#Y_location").text();
-        console.log(x, y);
         $.ajax({
             type: "post",
             url: "/upload/",
             data: {
-                X: x,
-                Y: y,
+                X1: $("#X1_location").text(),
+                Y1: $("#Y1_location").text(),
+                label1: $('input[type=radio][name=front_back1]:checked').val(),
+                X2: $("#X2_location").text(),
+                Y2: $("#Y2_location").text(),
+                label2: $('input[type=radio][name=front_back2]:checked').val(),
+                X3: $("#X3_location").text(),
+                Y3: $("#Y3_location").text(),
+                label3: $('input[type=radio][name=front_back3]:checked').val(),
+                X4: $("#X4_location").text(),
+                Y4: $("#Y4_location").text(),
+                label4: $('input[type=radio][name=front_back4]:checked').val(),
+                X5: $("#X5_location").text(),
+                Y5: $("#Y5_location").text(),
+                label5: $('input[type=radio][name=front_back5]:checked').val(),
             },
             success: function () {
                 alert("提交成功")

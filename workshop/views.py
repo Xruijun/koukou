@@ -35,10 +35,29 @@ def upload(request):
         fs = FileSystemStorage(location="./media/temp")
         filename = fs.save(file.name, file)
         print(filename)
-    if request.method == 'POST' and request.POST.get('X'):
-        x = request.POST.get('X')
-        y = request.POST.get('Y')
-        pointlist = [x,y,1]
+    if request.method == 'POST' and request.POST.get('X1'):
+        pointlist = [[]for i in range(5)]
+        x1 = request.POST.get('X1')
+        y1 = request.POST.get('Y1')
+        label1 = request.POST.get('label1')
+        x2 = request.POST.get('X2')
+        y2 = request.POST.get('Y2')
+        label2 = request.POST.get('label2')
+        x3 = request.POST.get('X3')
+        y3 = request.POST.get('Y3')
+        label3 = request.POST.get('label3')
+        x4 = request.POST.get('X4')
+        y4 = request.POST.get('Y4')
+        label4 = request.POST.get('label4')
+        x5 = request.POST.get('X5')
+        y5 = request.POST.get('Y5')
+        label5 = request.POST.get('label5')
+        pointlist[0] = [x1,y1,label1]
+        pointlist[1] = [x2, y2, label2]
+        pointlist[2] = [x3, y3, label3]
+        pointlist[3] = [x4, y4, label4]
+        pointlist[4] = [x5, y5, label5]
+        print(pointlist)
     return render(request, 'upload.html')
 
 
